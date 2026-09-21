@@ -79,6 +79,11 @@ function renderProgress() {
   progressFill.style.width = total === 0 ? "0%" : `${(completed / total) * 100}%`;
 }
 
+const TODO_ITEM_CLASSES =
+  "todo-item flex items-center gap-2.5 px-3 py-2.5 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white";
+const TODO_TEXT_CLASSES = "todo-text flex-1 break-words cursor-pointer";
+const TODO_TEXT_COMPLETED_CLASSES = "line-through text-gray-400";
+
 function renderList() {
   const filtered = getFilteredTodos();
   list.innerHTML = "";
@@ -96,27 +101,29 @@ function renderList() {
 
   for (const todo of filtered) {
     const li = document.createElement("li");
-    li.className = "todo-item" + (todo.isComplete ? " completed" : "");
+    li.className = TODO_ITEM_CLASSES + (todo.isComplete ? " completed" : "");
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
+    checkbox.className = "w-[18px] h-[18px] cursor-pointer accent-indigo-600";
     checkbox.checked = todo.isComplete;
     checkbox.addEventListener("change", () => toggleTodo(todo.id));
 
     const text = document.createElement("span");
-    text.className = "todo-text";
+    text.className =
+      TODO_TEXT_CLASSES + (todo.isComplete ? " " + TODO_TEXT_COMPLETED_CLASSES : "");
     text.textContent = todo.text;
     text.title = "더블클릭하여 수정";
     text.addEventListener("dblclick", () => startEdit(li, todo));
 
     const editBtn = document.createElement("button");
-    editBtn.className = "edit-btn";
+    editBtn.className = "edit-btn border-none bg-transparent cursor-pointer text-sm px-2 py-1 text-indigo-600 hover:underline";
     editBtn.type = "button";
     editBtn.textContent = "수정";
     editBtn.addEventListener("click", () => startEdit(li, todo));
 
     const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-btn";
+    deleteBtn.className = "delete-btn border-none bg-transparent cursor-pointer text-sm px-2 py-1 text-red-500 hover:underline";
     deleteBtn.type = "button";
     deleteBtn.textContent = "삭제";
     deleteBtn.addEventListener("click", () => deleteTodo(todo.id));
@@ -129,7 +136,8 @@ function renderList() {
 function startEdit(li, todo) {
   const editInput = document.createElement("input");
   editInput.type = "text";
-  editInput.className = "edit-input";
+  editInput.className =
+    "edit-input flex-1 px-2 py-1.5 border border-indigo-600 rounded-md text-[0.95rem] font-inherit";
   editInput.value = todo.text;
   editInput.maxLength = 200;
 
@@ -168,12 +176,17 @@ form.addEventListener("submit", (e) => {
   input.focus();
 });
 
+const FILTER_TAB_ACTIVE_CLASSES = ["bg-white", "text-indigo-600", "font-semibold", "shadow-sm"];
+const FILTER_TAB_INACTIVE_CLASSES = ["bg-transparent", "text-gray-500"];
+
 filterTabs.forEach((tab) => {
   tab.addEventListener("click", () => {
     currentFilter = tab.dataset.filter;
     filterTabs.forEach((t) => {
-      t.classList.toggle("active", t === tab);
-      t.setAttribute("aria-selected", t === tab ? "true" : "false");
+      const isActive = t === tab;
+      t.classList.remove(...FILTER_TAB_ACTIVE_CLASSES, ...FILTER_TAB_INACTIVE_CLASSES);
+      t.classList.add(...(isActive ? FILTER_TAB_ACTIVE_CLASSES : FILTER_TAB_INACTIVE_CLASSES));
+      t.setAttribute("aria-selected", isActive ? "true" : "false");
     });
     render();
   });
