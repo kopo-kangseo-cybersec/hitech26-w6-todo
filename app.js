@@ -35,20 +35,20 @@ function visibleTasks() {
 function render() {
   const filteredTasks = visibleTasks();
   taskList.innerHTML = filteredTasks.map((task) => `
-    <li class="task-item ${task.isComplete ? "completed" : ""}" data-id="${task.id}">
+    <li class="task-item task-appear flex min-h-[66px] items-center gap-[13px] border-b border-[#ebe6de] px-2.5 py-3 pl-3 last:border-b-0 ${task.isComplete ? "completed" : ""}" data-id="${task.id}">
       ${editingTaskId === task.id ? `
-        <div class="edit-form">
-          <input class="edit-input" type="text" maxlength="120" value="${escapeHtml(task.text)}" aria-label="${escapeHtml(task.text)} 수정">
-          <div class="edit-actions">
-            <button class="edit-save-button" type="button" data-action="save-edit">저장</button>
-            <button class="edit-cancel-button" type="button" data-action="cancel-edit">취소</button>
+        <div class="flex w-full items-center gap-2.5 max-sm:flex-col max-sm:items-stretch">
+          <input class="min-w-0 flex-1 rounded border border-[#dc674f] bg-white px-3 py-2.5 text-[#252421] outline-none ring-4 ring-[#dc674f]/[.12]" type="text" maxlength="120" value="${escapeHtml(task.text)}" aria-label="${escapeHtml(task.text)} 수정">
+          <div class="flex flex-none gap-1 max-sm:justify-end">
+            <button class="rounded bg-[#252421] px-2.5 py-2 text-[.78rem] font-bold text-white transition hover:bg-[#a84131]" type="button" data-action="save-edit">저장</button>
+            <button class="rounded bg-[#f0ece4] px-2.5 py-2 text-[.78rem] font-bold text-[#77736b] transition hover:text-[#252421]" type="button" data-action="cancel-edit">취소</button>
           </div>
         </div>
       ` : `
-        <button class="check-button" type="button" data-action="toggle" aria-label="${task.isComplete ? "완료 취소" : "완료 처리"}">${task.isComplete ? "✓" : ""}</button>
-        <span class="task-text">${escapeHtml(task.text)}</span>
-        <button class="edit-button" type="button" data-action="edit" aria-label="${escapeHtml(task.text)} 수정">수정</button>
-        <button class="delete-button" type="button" data-action="delete" aria-label="${escapeHtml(task.text)} 삭제">삭제</button>
+        <button class="grid h-[25px] w-[25px] flex-none place-items-center rounded-full border-[1.5px] border-[#a9a399] p-0 text-[.8rem] text-white transition hover:border-[#dc674f] ${task.isComplete ? "border-[#dc674f] bg-[#dc674f]" : "bg-transparent"}" type="button" data-action="toggle" aria-label="${task.isComplete ? "완료 취소" : "완료 처리"}">${task.isComplete ? "✓" : ""}</button>
+        <span class="min-w-0 flex-1 overflow-wrap-anywhere text-[.98rem] leading-[1.45] ${task.isComplete ? "text-[#77736b] line-through decoration-[#77736b]" : ""}">${escapeHtml(task.text)}</span>
+        <button class="rounded p-2 text-[.78rem] text-[#77736b] transition hover:text-[#252421]" type="button" data-action="edit" aria-label="${escapeHtml(task.text)} 수정">수정</button>
+        <button class="rounded p-2 text-[.78rem] text-[#aaa39a] transition hover:text-[#a84131]" type="button" data-action="delete" aria-label="${escapeHtml(task.text)} 삭제">삭제</button>
       `}
     </li>
   `).join("");
