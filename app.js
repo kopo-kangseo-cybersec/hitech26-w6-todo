@@ -66,7 +66,10 @@ function render() {
         : completedTodos;
     tab.querySelector("span").textContent = count;
     const isActive = filter === state.filter;
-    tab.classList.toggle("is-active", isActive);
+    tab.classList.toggle("border-coral", isActive);
+    tab.classList.toggle("border-transparent", !isActive);
+    tab.classList.toggle("text-leaf-dark", isActive);
+    tab.classList.toggle("text-muted", !isActive);
     tab.setAttribute("aria-current", isActive ? "page" : "false");
   });
 
@@ -83,29 +86,29 @@ function render() {
 
 function createTodoElement(todo) {
   const item = document.createElement("article");
-  item.className = `todo-item${todo.isComplete ? " is-complete" : ""}`;
+  item.className = "flex items-center gap-[13px] rounded-xl border border-line bg-white px-[17px] py-4 shadow-[0_5px_20px_rgba(40,74,59,0.035)] transition hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(40,74,59,0.08)]";
   item.dataset.id = todo.id;
 
   const checkButton = document.createElement("button");
-  checkButton.className = `todo-check${todo.isComplete ? " is-complete" : ""}`;
+  checkButton.className = `grid h-[22px] w-[22px] shrink-0 place-items-center rounded-full border-[1.5px] p-0 text-transparent transition hover:border-leaf${todo.isComplete ? " border-leaf bg-leaf text-white" : " border-[#b8c9c0] bg-white"}`;
   checkButton.type = "button";
   checkButton.setAttribute("aria-label", todo.isComplete ? "완료 취소" : "완료 처리");
   checkButton.innerHTML = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><path d=\"m5 12 4 4L19 6\"/></svg>";
   checkButton.addEventListener("click", () => toggleTodo(todo.id));
 
   const text = document.createElement("p");
-  text.className = "todo-text";
+  text.className = `min-w-0 flex-1 [overflow-wrap:anywhere] text-[15px] leading-[1.45]${todo.isComplete ? " text-[#9aa9a2] line-through" : ""}`;
   text.textContent = todo.text;
 
   const editButton = document.createElement("button");
-  editButton.className = "edit-button";
+  editButton.className = "shrink-0 rounded-[7px] border-0 bg-transparent px-2 py-1.5 text-xs text-muted transition hover:bg-mint hover:text-leaf-dark";
   editButton.type = "button";
   editButton.setAttribute("aria-label", "할 일 수정");
   editButton.textContent = "수정";
   editButton.onclick = () => beginEdit(todo, item, text, editButton);
 
   const deleteButton = document.createElement("button");
-  deleteButton.className = "delete-button";
+  deleteButton.className = "h-[30px] w-[30px] shrink-0 rounded-[7px] border-0 bg-transparent p-0 text-xl leading-none text-[#a5b1ab] transition hover:bg-[#fff1ed] hover:text-coral";
   deleteButton.type = "button";
   deleteButton.setAttribute("aria-label", "할 일 삭제");
   deleteButton.textContent = "×";
@@ -117,14 +120,14 @@ function createTodoElement(todo) {
 
 function beginEdit(todo, item, text, editButton) {
   const editInput = document.createElement("input");
-  editInput.className = "todo-edit-input";
+  editInput.className = "min-w-0 flex-1 rounded-[7px] border border-leaf bg-paper px-2.5 py-2 text-ink outline-none ring-4 ring-leaf/10";
   editInput.type = "text";
   editInput.maxLength = 120;
   editInput.value = todo.text;
   editInput.setAttribute("aria-label", "할 일 수정");
 
   const cancelButton = document.createElement("button");
-  cancelButton.className = "cancel-button";
+  cancelButton.className = "shrink-0 rounded-[7px] border-0 bg-transparent px-2 py-1.5 text-xs text-muted transition hover:bg-mint hover:text-leaf-dark";
   cancelButton.type = "button";
   cancelButton.setAttribute("aria-label", "수정 취소");
   cancelButton.textContent = "취소";
@@ -143,12 +146,12 @@ function beginEdit(todo, item, text, editButton) {
     cancelButton.remove();
     editButton.textContent = "수정";
     editButton.setAttribute("aria-label", "할 일 수정");
-    editButton.classList.remove("save-button");
+    editButton.classList.remove("font-bold", "text-leaf-dark");
   };
 
   editButton.textContent = "저장";
   editButton.setAttribute("aria-label", "수정 저장");
-  editButton.classList.add("save-button");
+  editButton.classList.add("font-bold", "text-leaf-dark");
   editButton.insertAdjacentElement("afterend", cancelButton);
   text.replaceWith(editInput);
   editButton.onclick = () => finishEdit(true);
