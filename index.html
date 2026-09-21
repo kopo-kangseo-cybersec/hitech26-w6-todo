@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4efe6">
+  <title>오늘의 할 일</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style type="text/tailwindcss">
+    @layer base {
+      * { @apply box-border; }
+      body { @apply m-0 min-w-[320px] text-[#252421] bg-[#f4efe6] font-sans; background-image: radial-gradient(rgba(37, 36, 33, .07) .7px, transparent .7px); background-size: 13px 13px; }
+      button, input { @apply font-sans; }
+      button { @apply cursor-pointer; }
+    }
+    @layer utilities {
+      .task-appear { animation: appear .3s ease both; }
+      @keyframes appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    }
+  </style>
+</head>
+<body>
+  <main class="mx-auto w-[calc(100%-36px)] max-w-[920px] py-11 pb-16 max-sm:w-[calc(100%-24px)] max-sm:pt-6">
+    <div class="mb-11 flex items-center justify-between gap-5 text-xs font-bold uppercase tracking-[.12em] text-[#77736b] max-sm:mb-8">
+      <strong class="text-[.82rem] normal-case tracking-[.03em] text-[#a84131]">오늘의 할 일</strong>
+      <span id="today-label"></span>
+    </div>
+
+    <section class="mb-[34px] grid grid-cols-[1fr_250px] items-end gap-7 max-sm:grid-cols-1 max-sm:gap-6" aria-labelledby="page-title">
+      <div>
+        <h1 id="page-title" class="m-0 max-w-[560px] text-[clamp(2.75rem,7vw,5rem)] font-extrabold leading-[1.08] max-sm:text-[clamp(2.7rem,15vw,4.5rem)] max-sm:leading-[1.05]">작은 일도<br>기록해두기.</h1>
+        <p class="mt-[18px] mb-0 text-[.95rem] leading-[1.6] text-[#77736b]">오늘 해야 할 일을 하나씩 정리하고,<br>끝낸 일은 가볍게 체크해 보세요.</p>
+      </div>
+      <div class="rounded border border-black/10 bg-white/45 p-5" aria-label="진행률">
+        <div class="mb-[15px] flex items-baseline justify-between gap-3">
+          <span class="text-[.78rem] font-bold text-[#77736b]">오늘의 진행률</span>
+          <strong id="progress-number" class="text-[1.7rem] font-bold">0%</strong>
+        </div>
+        <div class="progress-track h-[9px] overflow-hidden rounded-full bg-[#c7d9ce]" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="할 일 완료 진행률">
+          <div class="h-full w-0 rounded-full bg-[#dc674f] transition-[width] duration-300 ease-in-out" id="progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-lg border border-[#ded8ce] bg-[#fbfaf7]/90 p-[26px] shadow-[0_18px_45px_rgba(73,57,38,.09)] max-sm:px-[13px] max-sm:py-[17px]" aria-label="할 일 목록">
+      <form class="mb-[25px] flex gap-2.5" id="add-form">
+        <label for="task-input" class="sr-only">새 할 일</label>
+        <input class="min-w-0 flex-1 rounded border border-[#ded8ce] bg-white px-4 py-[15px] text-[#252421] outline-none transition focus:border-[#dc674f] focus:ring-4 focus:ring-[#dc674f]/15" id="task-input" type="text" maxlength="120" placeholder="새로운 할 일을 적어주세요" autocomplete="off">
+        <button class="rounded bg-[#252421] px-[22px] font-bold text-white transition hover:-translate-y-px hover:bg-[#a84131] max-sm:px-4" type="submit">추가하기</button>
+      </form>
+
+      <div class="filters flex gap-1 border-b border-[#ded8ce] pb-3" role="tablist" aria-label="할 일 필터">
+        <button class="rounded px-[13px] py-2 text-[.85rem] font-bold text-[#77736b] transition hover:bg-[#f0ece4] hover:text-[#252421] aria-selected:bg-[#f7e3dc] aria-selected:text-[#a84131]" type="button" role="tab" data-filter="all" aria-selected="true">전체</button>
+        <button class="rounded px-[13px] py-2 text-[.85rem] font-bold text-[#77736b] transition hover:bg-[#f0ece4] hover:text-[#252421] aria-selected:bg-[#f7e3dc] aria-selected:text-[#a84131]" type="button" role="tab" data-filter="active" aria-selected="false">진행 중</button>
+        <button class="rounded px-[13px] py-2 text-[.85rem] font-bold text-[#77736b] transition hover:bg-[#f0ece4] hover:text-[#252421] aria-selected:bg-[#f7e3dc] aria-selected:text-[#a84131]" type="button" role="tab" data-filter="completed" aria-selected="false">완료됨</button>
+      </div>
+
+      <ul class="task-list" id="task-list"></ul>
+      <div class="empty-state" id="empty-state" hidden>
+        <strong id="empty-title">아직 할 일이 없어요.</strong>
+        <p id="empty-description">위 입력창에서 오늘의 첫 일을 추가해 보세요.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
