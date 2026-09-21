@@ -204,7 +204,33 @@
       font: 0.78rem Arial, sans-serif;
     }
 
-    .delete-button:hover { color: var(--accent); }
+    .edit-button { color: var(--ink); }
+    .edit-button:hover, .delete-button:hover { color: var(--accent); }
+
+    .edit-form {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .edit-input {
+      width: 100%;
+      min-width: 0;
+      padding: 8px 10px;
+      color: var(--ink);
+      border: 1px solid var(--accent);
+      outline: none;
+      font-size: 1rem;
+    }
+
+    .edit-action {
+      padding: 8px;
+      color: var(--accent-dark);
+      background: transparent;
+      border: 0;
+      font: 700 0.75rem Arial, sans-serif;
+      white-space: nowrap;
+    }
 
     .empty {
       padding: 52px 20px 58px;
@@ -265,6 +291,7 @@
     const STORAGE_KEY = "today-todos";
     let todos = loadTodos();
     let currentFilter = "all";
+    let editingId = null;
 
     const form = document.querySelector("#todo-form");
     const input = document.querySelector("#todo-input");
@@ -315,12 +342,23 @@
         <article class="todo-item${todo.isComplete ? " completed" : ""}" data-id="${todo.id}">
           <button class="check" type="button" data-action="toggle" aria-label="${todo.isComplete ? "완료 취소" : "완료 처리"}" aria-pressed="${todo.isComplete}">${todo.isComplete ? "✓" : ""}</button>
           <div class="todo-copy">
-            <div class="todo-text">${escapeHtml(todo.text)}</div>
-            <div class="todo-meta">${formatDate(todo.createdAt)}</div>
+            ${todo.id === editingId ? `
+              <form class="edit-form" data-action="save-edit">
+                <input class="edit-input" type="text" maxlength="120" value="${escapeHtml(todo.text)}" aria-label="할 일 수정">
+                <button class="edit-action" type="submit">저장</button>
+                <button class="edit-action" type="button" data-action="cancel-edit">취소</button>
+              </form>
+            ` : `
+              <div class="todo-text">${escapeHtml(todo.text)}</div>
+              <div class="todo-meta">${formatDate(todo.createdAt)}</div>
+            `}
           </div>
+          ${todo.id === editingId ? "" : `<button class="delete-button edit-button" type="button" data-action="edit">수정</button>`}
           <button class="delete-button" type="button" data-action="delete" aria-label="${escapeHtml(todo.text)} 삭제">삭제</button>
         </article>
       `).join("");
+
+      if (editingId) list.querySelector(".edit-input")?.focus();
     }
 
     function escapeHtml(text) {
@@ -354,11 +392,34 @@
       render();
     });
 
+    list.addEventListener("submit", (event) => {
+      const editForm = event.target.closest("form[data-action='save-edit']");
+      if (!editForm) return;
+      event.preventDefault();
+      const item = editForm.closest("[data-id]");
+      const text = editForm.querySelector(".edit-input").value.trim();
+      if (!text) return;
+      todos = todos.map((todo) => todo.id === item.dataset.id ? { ...todo, text } : todo);
+      editingId = null;
+      saveTodos();
+      render();
+    });
+
     list.addEventListener("click", (event) => {
       const button = event.target.closest("button[data-action]");
       if (!button) return;
       const item = button.closest("[data-id]");
       const id = item.dataset.id;
+      if (button.dataset.action === "edit") {
+        editingId = id;
+        render();
+        return;
+      }
+      if (button.dataset.action === "cancel-edit") {
+        editingId = null;
+        render();
+        return;
+      }
       if (button.dataset.action === "toggle") {
         todos = todos.map((todo) => todo.id === id ? { ...todo, isComplete: !todo.isComplete } : todo);
       } else {
