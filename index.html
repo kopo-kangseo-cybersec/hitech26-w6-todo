@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="오늘의 할 일을 정리하고 진행률을 확인하는 To-Do 리스트">
+  <title>오늘의 할 일</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: "#1d2925", muted: "#718079", line: "#dce5df", paper: "#f7faf7",
+            leaf: "#3e7c68", "leaf-dark": "#2d5e4f", mint: "#d9eee4", coral: "#e77d62"
+          },
+          fontFamily: { sans: ["DM Sans", "sans-serif"], display: ["Gowun Dodum", "sans-serif"] }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="min-w-[320px] bg-paper font-sans text-ink antialiased">
+  <main class="mx-auto w-[calc(100%-40px)] max-w-[840px] py-[50px] pb-20 max-sm:w-[calc(100%-28px)] max-sm:pt-7">
+    <header class="mb-[42px] flex items-center gap-4 max-sm:mb-7">
+      <div class="grid h-12 w-12 shrink-0 rotate-[-6deg] place-items-center rounded-[15px_15px_15px_4px] bg-leaf text-[25px] font-bold text-white" aria-hidden="true">✓</div>
+      <div class="min-w-0 flex-1">
+        <p class="mb-[5px] text-[11px] font-bold tracking-[0.18em] text-leaf">DAILY RHYTHM</p>
+        <h1 class="font-display text-[clamp(27px,5vw,36px)] leading-[1.1]">매일매일 한 걸음씩</h1>
+      </div>
+      <p class="m-0 self-start pt-1 text-[13px] text-muted max-sm:text-[11px]" id="todayLabel"></p>
+    </header>
+
+    <section class="rounded-[5px_26px_26px_26px] bg-leaf-dark px-[30px] pb-[29px] pt-[27px] text-white shadow-[0_20px_55px_rgba(40,74,59,0.09)] max-sm:px-[21px] max-sm:pb-6 max-sm:pt-[22px]" aria-labelledby="progressHeading">
+      <div class="flex items-center justify-between gap-5 max-sm:items-end">
+        <div>
+          <p class="mb-[5px] text-[11px] font-bold tracking-[0.18em] text-[#a5d2bd]">YOUR PROGRESS</p>
+          <h2 class="mb-0 font-display text-[clamp(20px,4vw,27px)] font-normal max-sm:text-xl" id="progressHeading">차근차근, 오늘도 해내는 중</h2>
+        </div>
+        <p class="m-0 flex shrink-0 items-baseline gap-1 whitespace-nowrap text-[13px] text-[#c7e4d4]"><strong class="text-[31px] text-white max-sm:text-[26px]" id="completedCount">0</strong><span>/ <span id="totalCount">0</span> 완료</span></p>
+      </div>
+      <div class="progress-track mt-[25px] h-[9px] overflow-hidden rounded-full bg-white/15" role="progressbar" aria-label="할 일 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <span class="block h-full w-0 rounded-[inherit] bg-[#f1c779] transition-[width] duration-300 ease-in-out" id="progressBar"></span>
+      </div>
+    </section>
+
+    <section class="mt-[46px] max-sm:mt-[35px]" aria-labelledby="todoHeading">
+      <div class="mb-[18px] flex items-center justify-between">
+        <div>
+          <p class="mb-[5px] text-[11px] font-bold tracking-[0.18em] text-leaf">TASKS</p>
+          <h2 class="m-0 font-display text-[26px] font-normal" id="todoHeading">할 일 목록</h2>
+        </div>
+        <span class="rounded-full bg-mint px-[11px] py-1.5 text-xs font-bold text-leaf-dark" id="visibleCount">0개</span>
+      </div>
+
+      <form class="flex gap-2.5" id="todoForm">
+        <label class="sr-only" for="todoInput">새 할 일</label>
+        <input class="w-full rounded-xl border border-line bg-white px-[17px] py-[15px] text-ink outline-none transition focus:border-leaf focus:ring-4 focus:ring-leaf/10" id="todoInput" name="todo" type="text" maxlength="120" placeholder="새로운 할 일을 적어보세요" autocomplete="off" required>
+        <button type="submit" class="shrink-0 rounded-xl bg-coral px-[19px] font-bold text-white transition hover:-translate-y-px hover:bg-[#d96950]" aria-label="할 일 추가"><span aria-hidden="true" class="mr-0.5 text-[19px] align-[-1px]">+</span> 추가</button>
+      </form>
+
+      <nav class="mt-8 flex gap-[25px] border-b border-line max-sm:gap-[17px]" aria-label="할 일 필터">
+        <button class="filter-tab relative border-b-2 border-coral pb-[13px] text-[13px] font-semibold text-leaf-dark max-sm:text-xs" type="button" data-filter="all" aria-current="page">전체 <span class="ml-1 opacity-65">0</span></button>
+        <button class="filter-tab relative border-b-2 border-transparent pb-[13px] text-[13px] font-semibold text-muted max-sm:text-xs" type="button" data-filter="active">진행 중 <span class="ml-1 opacity-65">0</span></button>
+        <button class="filter-tab relative border-b-2 border-transparent pb-[13px] text-[13px] font-semibold text-muted max-sm:text-xs" type="button" data-filter="completed">완료됨 <span class="ml-1 opacity-65">0</span></button>
+      </nav>
+
+      <div class="grid gap-2.5" id="todoList" aria-live="polite"></div>
+      <div class="px-5 py-12 text-center" id="emptyState" hidden>
+        <div class="mx-auto mb-3.5 grid h-[47px] w-[47px] place-items-center rounded-[14px_14px_14px_4px] bg-mint text-[22px] text-leaf" aria-hidden="true">✦</div>
+        <h3 class="mb-1.5 font-display text-xl font-normal" id="emptyTitle">아직 할 일이 없어요</h3>
+        <p class="m-0 text-[13px] text-muted" id="emptyDescription">작은 일부터 하나씩 시작해볼까요?</p>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
