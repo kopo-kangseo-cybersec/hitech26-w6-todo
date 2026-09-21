@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To-Do 리스트</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <h1>To-Do 리스트</h1>
+
+    <form id="todo-form" class="todo-form">
+      <input
+        id="todo-input"
+        type="text"
+        placeholder="할 일을 입력하세요"
+        autocomplete="off"
+        maxlength="200"
+      />
+      <button type="submit">추가</button>
+    </form>
+
+    <div class="progress-section">
+      <div class="progress-text">
+        <span id="progress-count">0 / 0 완료</span>
+      </div>
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="filter-tabs" role="tablist">
+      <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true">전체</button>
+      <button class="filter-tab" data-filter="active" role="tab" aria-selected="false">진행 중</button>
+      <button class="filter-tab" data-filter="completed" role="tab" aria-selected="false">완료됨</button>
+    </div>
+
+    <ul id="todo-list" class="todo-list"></ul>
+
+    <p id="empty-state" class="empty-state" hidden>표시할 항목이 없습니다.</p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
