@@ -1,0 +1,138 @@
+:root {
+  --ink: #1d2925;
+  --muted: #718079;
+  --line: #dce5df;
+  --paper: #f7faf7;
+  --white: #ffffff;
+  --leaf: #3e7c68;
+  --leaf-dark: #2d5e4f;
+  --mint: #d9eee4;
+  --coral: #e77d62;
+  --shadow: 0 20px 55px rgba(40, 74, 59, 0.09);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  min-width: 320px;
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "DM Sans", sans-serif;
+}
+
+body::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: 370px;
+  content: "";
+  background: linear-gradient(135deg, #e7f2eb 0%, #f7faf7 68%);
+  clip-path: ellipse(80% 70% at 20% 20%);
+}
+
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+.app-shell {
+  width: min(100% - 40px, 840px);
+  margin: 0 auto;
+  padding: 50px 0 80px;
+}
+
+.topbar, .progress-copy, .section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar { gap: 16px; margin-bottom: 42px; }
+.brand-mark {
+  display: grid;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  color: var(--white);
+  background: var(--leaf);
+  border-radius: 15px 15px 15px 4px;
+  font-size: 25px;
+  font-weight: 700;
+  transform: rotate(-6deg);
+}
+.brand-mark + div { flex: 1; }
+.eyebrow, .section-kicker {
+  margin: 0 0 5px;
+  color: var(--leaf);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 0; font-family: "Gowun Dodum", sans-serif; font-size: clamp(27px, 5vw, 36px); line-height: 1.1; }
+.date-label { margin: 0; color: var(--muted); font-size: 13px; }
+
+.progress-panel {
+  padding: 27px 30px 29px;
+  color: var(--white);
+  background: var(--leaf-dark);
+  border-radius: 5px 26px 26px 26px;
+  box-shadow: var(--shadow);
+}
+.progress-copy { gap: 20px; }
+.progress-panel .section-kicker { color: #a5d2bd; }
+.progress-panel h2 { margin-bottom: 0; font-family: "Gowun Dodum", sans-serif; font-size: clamp(20px, 4vw, 27px); font-weight: 400; }
+.progress-count { display: flex; align-items: baseline; gap: 4px; margin: 0; white-space: nowrap; color: #c7e4d4; font-size: 13px; }
+.progress-count strong { color: var(--white); font-size: 31px; }
+.progress-track { height: 9px; margin-top: 25px; overflow: hidden; background: rgba(255, 255, 255, 0.15); border-radius: 99px; }
+.progress-bar { display: block; width: 0; height: 100%; background: #f1c779; border-radius: inherit; transition: width 300ms ease; }
+
+.todo-section { margin-top: 46px; }
+.section-heading { margin-bottom: 18px; }
+.section-heading h2 { margin: 0; font-family: "Gowun Dodum", sans-serif; font-size: 26px; font-weight: 400; }
+.task-badge { padding: 6px 11px; color: var(--leaf-dark); background: var(--mint); border-radius: 99px; font-size: 12px; font-weight: 700; }
+.add-form { display: flex; gap: 10px; }
+.add-form input { width: 100%; padding: 15px 17px; color: var(--ink); background: var(--white); border: 1px solid var(--line); border-radius: 12px; outline: none; transition: border 180ms ease, box-shadow 180ms ease; }
+.add-form input:focus { border-color: var(--leaf); box-shadow: 0 0 0 4px rgba(62, 124, 104, 0.12); }
+.add-button { flex: 0 0 auto; padding: 0 19px; color: var(--white); background: var(--coral); border: 0; border-radius: 12px; font-weight: 700; transition: background 180ms ease, transform 180ms ease; }
+.add-button:hover { background: #d96950; transform: translateY(-1px); }
+.add-button span { margin-right: 3px; font-size: 19px; vertical-align: -1px; }
+
+.filter-tabs { display: flex; gap: 25px; margin: 32px 0 12px; border-bottom: 1px solid var(--line); }
+.filter-tab { position: relative; padding: 0 0 13px; color: var(--muted); background: transparent; border: 0; font-size: 13px; font-weight: 600; }
+.filter-tab span { margin-left: 4px; color: inherit; opacity: 0.65; }
+.filter-tab::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; content: ""; background: transparent; }
+.filter-tab.is-active { color: var(--leaf-dark); }
+.filter-tab.is-active::after { background: var(--coral); }
+
+.todo-list { display: grid; gap: 10px; }
+.todo-item { display: flex; align-items: center; gap: 13px; padding: 16px 17px; background: var(--white); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 5px 20px rgba(40, 74, 59, 0.035); animation: rise 220ms ease both; }
+.todo-check { display: grid; flex: 0 0 22px; width: 22px; height: 22px; place-items: center; padding: 0; color: transparent; background: var(--white); border: 1.5px solid #b8c9c0; border-radius: 50%; transition: all 180ms ease; }
+.todo-check:hover { border-color: var(--leaf); }
+.todo-check.is-complete { color: var(--white); background: var(--leaf); border-color: var(--leaf); }
+.todo-check svg { width: 13px; height: 13px; }
+.todo-text { flex: 1; min-width: 0; margin: 0; overflow-wrap: anywhere; font-size: 15px; line-height: 1.45; }
+.todo-item.is-complete .todo-text { color: #9aa9a2; text-decoration: line-through; }
+.delete-button { flex: 0 0 30px; width: 30px; height: 30px; padding: 0; color: #a5b1ab; background: transparent; border: 0; border-radius: 7px; font-size: 20px; line-height: 1; }
+.delete-button:hover { color: var(--coral); background: #fff1ed; }
+
+.empty-state { padding: 48px 20px; text-align: center; }
+.empty-icon { display: grid; width: 47px; height: 47px; margin: 0 auto 14px; place-items: center; color: var(--leaf); background: var(--mint); border-radius: 14px 14px 14px 4px; font-size: 22px; }
+.empty-state h3 { margin-bottom: 7px; font-family: "Gowun Dodum", sans-serif; font-size: 20px; font-weight: 400; }
+.empty-state p { margin: 0; color: var(--muted); font-size: 13px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 560px) {
+  .app-shell { width: min(100% - 28px, 840px); padding-top: 28px; }
+  .topbar { margin-bottom: 29px; }
+  .date-label { align-self: flex-start; padding-top: 7px; font-size: 11px; }
+  .progress-panel { padding: 22px 21px 24px; }
+  .progress-copy { align-items: flex-end; }
+  .progress-panel h2 { font-size: 20px; }
+  .progress-count strong { font-size: 26px; }
+  .todo-section { margin-top: 35px; }
+  .filter-tabs { gap: 17px; }
+  .filter-tab { font-size: 12px; }
+}
