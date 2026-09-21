@@ -91,6 +91,13 @@ function createTodoElement(todo) {
   date.dateTime = new Date(todo.createdAt).toISOString();
   date.textContent = formatDate(todo.createdAt);
 
+  const editButton = document.createElement('button');
+  editButton.className = 'edit-button';
+  editButton.type = 'button';
+  editButton.setAttribute('aria-label', `${todo.text} 수정`);
+  editButton.textContent = '수정';
+  editButton.addEventListener('click', () => startEditing(todo, item, text, editButton));
+
   const deleteButton = document.createElement('button');
   deleteButton.className = 'delete-button';
   deleteButton.type = 'button';
@@ -98,8 +105,53 @@ function createTodoElement(todo) {
   deleteButton.textContent = '×';
   deleteButton.addEventListener('click', () => deleteTodo(todo.id));
 
-  item.append(checkButton, text, date, deleteButton);
+  item.append(checkButton, text, date, editButton, deleteButton);
   return item;
+}
+
+function startEditing(todo, item, textElement, editButton) {
+  const input = document.createElement('input');
+  input.className = 'edit-input';
+  input.type = 'text';
+  input.maxLength = 120;
+  input.value = todo.text;
+
+  const saveButton = document.createElement('button');
+  saveButton.className = 'edit-action save-edit';
+  saveButton.type = 'button';
+  saveButton.textContent = '저장';
+
+  const cancelButton = document.createElement('button');
+  cancelButton.className = 'edit-action cancel-edit';
+  cancelButton.type = 'button';
+  cancelButton.textContent = '취소';
+
+  const editActions = document.createElement('span');
+  editActions.className = 'edit-actions';
+  editActions.append(saveButton, cancelButton);
+
+  const saveEdit = () => {
+    const nextText = input.value.trim();
+    if (!nextText) {
+      input.focus();
+      return;
+    }
+    state.todos = state.todos.map((currentTodo) => currentTodo.id === todo.id ? { ...currentTodo, text: nextText } : currentTodo);
+    saveTodos();
+    render();
+  };
+
+  const cancelEdit = () => render();
+  textElement.replaceWith(input);
+  editButton.replaceWith(editActions);
+  input.focus();
+  input.select();
+  saveButton.addEventListener('click', saveEdit);
+  cancelButton.addEventListener('click', cancelEdit);
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') saveEdit();
+    if (event.key === 'Escape') cancelEdit();
+  });
 }
 
 function addTodo(text) {
