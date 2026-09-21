@@ -17,6 +17,7 @@ const elements = {
   visibleCount: document.querySelector("#visibleCount"),
   progressBar: document.querySelector("#progressBar"),
   progressTrack: document.querySelector(".progress-track"),
+  progressHeading: document.querySelector("#progressHeading"),
   todayLabel: document.querySelector("#todayLabel"),
   tabs: document.querySelectorAll(".filter-tab")
 };
@@ -52,6 +53,9 @@ function render() {
   elements.progressBar.style.width = `${progress}%`;
   elements.progressTrack.setAttribute("aria-valuenow", progress);
   elements.progressTrack.setAttribute("aria-valuetext", `${progress}% 완료`);
+  elements.progressHeading.textContent = totalTodos > 0 && progress === 100
+    ? "오늘도 고생하셨어요"
+    : "차근차근, 오늘도 해내는 중";
 
   elements.tabs.forEach((tab) => {
     const filter = tab.dataset.filter;
