@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="오늘 해야 할 일을 정리하는 미니멀 To-Do 리스트">
+  <title>Focus List | To-Do</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Focus List 홈">
+        <span class="brand-mark" aria-hidden="true">+</span>
+        <span>FOCUS LIST</span>
+      </a>
+      <div class="date-stamp" id="todayLabel"></div>
+    </header>
+
+    <section class="hero" aria-labelledby="pageTitle">
+      <div>
+        <p class="eyebrow">YOUR DAILY SPACE</p>
+        <h1 id="pageTitle">오늘의 집중을<br><em>한 가지씩.</em></h1>
+      </div>
+      <p class="hero-copy">해야 할 일을 적고, 끝낸 일은 가볍게 지워보세요.<br>작은 완료가 하루의 방향을 만듭니다.</p>
+    </section>
+
+    <section class="progress-panel" aria-label="오늘의 진행률">
+      <div class="progress-heading">
+        <div>
+          <span class="section-label">TODAY'S PROGRESS</span>
+          <strong id="progressText">0 / 0 완료</strong>
+        </div>
+        <span class="progress-percent" id="progressPercent">0%</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-label="할 일 완료 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+        <span></span>
+      </div>
+    </section>
+
+    <section class="todo-section" aria-labelledby="listTitle">
+      <div class="section-header">
+        <div>
+          <span class="section-label">YOUR TASKS</span>
+          <h2 id="listTitle">할 일 목록</h2>
+        </div>
+        <span class="task-count" id="taskCount">0 items</span>
+      </div>
+
+      <form class="add-form" id="todoForm">
+        <label class="sr-only" for="todoInput">새 할 일</label>
+        <input id="todoInput" name="todo" type="text" maxlength="120" placeholder="새로운 할 일을 입력하세요" autocomplete="off" required>
+        <button class="add-button" type="submit"><span aria-hidden="true">+</span> 추가</button>
+      </form>
+
+      <div class="filter-row" role="tablist" aria-label="할 일 필터">
+        <button class="filter-tab is-active" type="button" role="tab" aria-selected="true" data-filter="all">전체 <span>0</span></button>
+        <button class="filter-tab" type="button" role="tab" aria-selected="false" data-filter="active">진행 중 <span>0</span></button>
+        <button class="filter-tab" type="button" role="tab" aria-selected="false" data-filter="completed">완료됨 <span>0</span></button>
+      </div>
+
+      <div class="todo-list" id="todoList" aria-live="polite"></div>
+      <div class="empty-state" id="emptyState" hidden>
+        <span class="empty-icon" aria-hidden="true">◌</span>
+        <strong id="emptyTitle">아직 할 일이 없어요</strong>
+        <p id="emptyDescription">위 입력창에 오늘의 첫 할 일을 적어보세요.</p>
+      </div>
+    </section>
+
+    <footer class="footer-note">작은 진전도 진전입니다 <span aria-hidden="true">↗</span></footer>
+  </main>
+</body>
+</html>
