@@ -158,17 +158,35 @@ h1 {
   accent-color: var(--color-primary);
 }
 
+.todo-item .edit-btn,
 .todo-item .delete-btn {
   border: none;
   background: transparent;
-  color: var(--color-danger);
   cursor: pointer;
   font-size: 0.85rem;
   padding: 4px 8px;
 }
 
+.todo-item .edit-btn {
+  color: var(--color-primary);
+}
+
+.todo-item .delete-btn {
+  color: var(--color-danger);
+}
+
+.todo-item .edit-btn:hover,
 .todo-item .delete-btn:hover {
   text-decoration: underline;
+}
+
+.todo-item .edit-input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--color-primary);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-family: inherit;
 }
 
 .empty-state {

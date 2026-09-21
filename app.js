@@ -56,6 +56,16 @@ function toggleTodo(id) {
   render();
 }
 
+function editTodo(id, newText) {
+  const trimmed = newText.trim();
+  if (!trimmed) return;
+  todos = todos.map((todo) =>
+    todo.id === id ? { ...todo, text: trimmed } : todo
+  );
+  saveTodos();
+  render();
+}
+
 function getFilteredTodos() {
   if (currentFilter === "active") return todos.filter((t) => !t.isComplete);
   if (currentFilter === "completed") return todos.filter((t) => t.isComplete);
@@ -96,6 +106,14 @@ function renderList() {
     const text = document.createElement("span");
     text.className = "todo-text";
     text.textContent = todo.text;
+    text.title = "더블클릭하여 수정";
+    text.addEventListener("dblclick", () => startEdit(li, todo));
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "edit-btn";
+    editBtn.type = "button";
+    editBtn.textContent = "수정";
+    editBtn.addEventListener("click", () => startEdit(li, todo));
 
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-btn";
@@ -103,9 +121,37 @@ function renderList() {
     deleteBtn.textContent = "삭제";
     deleteBtn.addEventListener("click", () => deleteTodo(todo.id));
 
-    li.append(checkbox, text, deleteBtn);
+    li.append(checkbox, text, editBtn, deleteBtn);
     list.appendChild(li);
   }
+}
+
+function startEdit(li, todo) {
+  const editInput = document.createElement("input");
+  editInput.type = "text";
+  editInput.className = "edit-input";
+  editInput.value = todo.text;
+  editInput.maxLength = 200;
+
+  const finishEdit = () => {
+    editTodo(todo.id, editInput.value);
+  };
+
+  editInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      finishEdit();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      render();
+    }
+  });
+  editInput.addEventListener("blur", finishEdit);
+
+  const textEl = li.querySelector(".todo-text");
+  textEl.replaceWith(editInput);
+  editInput.focus();
+  editInput.select();
 }
 
 function render() {
