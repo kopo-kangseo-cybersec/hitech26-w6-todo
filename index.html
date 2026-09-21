@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="오늘 해야 할 일을 정리하는 미니멀 To-Do 리스트">
+  <title>Focus List | To-Do</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#192321',
+            muted: '#74817d',
+            line: '#dbe4df',
+            paper: '#f6f8f5',
+            mint: '#b9e9d0',
+            'mint-deep': '#187454',
+            coral: '#ff806d'
+          },
+          fontFamily: {
+            sans: ['DM Sans', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif']
+          },
+          boxShadow: {
+            card: '0 18px 50px rgba(35, 61, 50, 0.08)'
+          }
+        }
+      }
+    };
+  </script>
+  <script src="app.js" defer></script>
+</head>
+<body class="min-w-[320px] bg-paper font-sans text-ink antialiased before:fixed before:right-0 before:top-0 before:-z-10 before:h-[500px] before:w-[39vw] before:content-[''] before:bg-mint before:opacity-40 before:[clip-path:polygon(24%_0,100%_0,100%_100%,0_80%)]">
+  <main class="mx-auto w-[min(calc(100%-40px),960px)] py-7 pb-12 max-[620px]:w-[min(calc(100%-28px),540px)] max-[620px]:pt-5">
+    <header class="flex items-center justify-between">
+      <a class="inline-flex items-center gap-2.5 font-display text-xs font-bold tracking-[.14em] text-ink no-underline" href="./" aria-label="Focus List 홈">
+        <span class="grid h-[26px] w-[26px] place-items-center rounded-full bg-ink text-lg leading-none text-mint" aria-hidden="true">+</span>
+        <span>FOCUS LIST</span>
+      </a>
+      <div class="text-[11px] font-bold uppercase tracking-[.13em] text-muted max-[620px]:text-[9px]" id="todayLabel"></div>
+    </header>
+
+    <section class="grid grid-cols-2 items-end gap-10 py-[104px] pb-[72px] max-[620px]:grid-cols-1 max-[620px]:gap-7 max-[620px]:py-[76px] max-[620px]:pb-12" aria-labelledby="pageTitle">
+      <div>
+        <p class="mb-4 text-[11px] font-bold tracking-[.17em] text-coral">YOUR DAILY SPACE</p>
+        <h1 class="m-0 font-display text-[clamp(42px,6.5vw,76px)] font-bold leading-[.97] tracking-[-.045em]" id="pageTitle">오늘의 집중을<br><em class="not-italic text-mint-deep">한 가지씩.</em></h1>
+      </div>
+      <p class="mb-[5px] max-w-[280px] justify-self-end text-sm leading-[1.8] text-muted max-[620px]:justify-self-start max-[620px]:mb-0">해야 할 일을 적고, 끝낸 일은 가볍게 지워보세요.<br>작은 완료가 하루의 방향을 만듭니다.</p>
+    </section>
+
+    <section class="border border-line bg-white/60 px-7 pb-7 pt-6 shadow-card max-[620px]:p-5" aria-label="오늘의 진행률">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-[.13em] text-muted">TODAY'S PROGRESS</span>
+          <strong class="mt-2 block font-display text-[21px]" id="progressText">0 / 0 완료</strong>
+        </div>
+        <span class="font-display text-[32px] font-bold text-mint-deep" id="progressPercent">0%</span>
+      </div>
+      <div class="mt-[22px] h-2.5 overflow-hidden rounded-full bg-[#e3ebe6]" role="progressbar" aria-label="할 일 완료 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+        <span class="block h-full w-0 rounded-full bg-mint-deep transition-[width] duration-300"></span>
+      </div>
+    </section>
+
+    <section class="pt-[74px] max-[620px]:pt-[52px]" aria-labelledby="listTitle">
+      <div class="mb-6 flex items-end justify-between">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-[.13em] text-muted">YOUR TASKS</span>
+          <h2 class="m-0 mt-2 font-display text-[28px] font-bold tracking-[-.04em]" id="listTitle">할 일 목록</h2>
+        </div>
+        <span class="text-[11px] font-bold uppercase tracking-[.08em] text-muted" id="taskCount">0 items</span>
+      </div>
+
+      <form class="flex gap-2.5 max-[620px]:flex-col" id="todoForm">
+        <label class="sr-only" for="todoInput">새 할 일</label>
+        <input class="min-w-0 w-full border border-line bg-white px-[18px] py-4 text-ink outline-none transition focus:border-mint-deep focus:ring-4 focus:ring-mint-deep/10 placeholder:text-[#a4b0ab]" id="todoInput" name="todo" type="text" maxlength="120" placeholder="새로운 할 일을 입력하세요" autocomplete="off" required>
+        <button class="whitespace-nowrap border-0 bg-ink px-[23px] text-[13px] font-bold text-white transition hover:-translate-y-0.5 hover:bg-mint-deep max-[620px]:min-h-12" type="submit"><span class="mr-1 text-lg align-[-1px]" aria-hidden="true">+</span> 추가</button>
+      </form>
+
+      <div class="mt-[31px] flex gap-6 border-b border-line max-[620px]:gap-[17px]" role="tablist" aria-label="할 일 필터">
+        <button class="filter-tab relative border-0 bg-transparent pb-[13px] text-[13px] font-semibold text-ink after:absolute after:bottom-[-1px] after:left-0 after:right-0 after:h-0.5 after:bg-coral" type="button" role="tab" aria-selected="true" data-filter="all">전체 <span class="ml-1 text-[11px] text-[#a9b4af]">0</span></button>
+        <button class="filter-tab relative border-0 bg-transparent pb-[13px] text-[13px] font-semibold text-muted" type="button" role="tab" aria-selected="false" data-filter="active">진행 중 <span class="ml-1 text-[11px] text-[#a9b4af]">0</span></button>
+        <button class="filter-tab relative border-0 bg-transparent pb-[13px] text-[13px] font-semibold text-muted" type="button" role="tab" aria-selected="false" data-filter="completed">완료됨 <span class="ml-1 text-[11px] text-[#a9b4af]">0</span></button>
+      </div>
+
+      <div class="grid gap-2.5" id="todoList" aria-live="polite"></div>
+      <div class="border border-dashed border-[#c9d5ce] px-5 py-[62px] text-center" id="emptyState" hidden>
+        <span class="mb-4 block text-[30px] text-mint-deep" aria-hidden="true">◌</span>
+        <strong class="font-display text-[17px]" id="emptyTitle">아직 할 일이 없어요</strong>
+        <p class="mt-[9px] mb-0 text-[13px] text-muted" id="emptyDescription">위 입력창에 오늘의 첫 할 일을 적어보세요.</p>
+      </div>
+    </section>
+
+    <footer class="mt-[72px] text-center text-xs text-[#9aa7a1]">작은 진전도 진전입니다 <span class="align-[-2px] text-[17px] text-coral" aria-hidden="true">↗</span></footer>
+  </main>
+</body>
+</html>
