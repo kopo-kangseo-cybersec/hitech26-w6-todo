@@ -112,7 +112,11 @@ h1 { margin-bottom: 0; font-family: "Gowun Dodum", sans-serif; font-size: clamp(
 .todo-check.is-complete { color: var(--white); background: var(--leaf); border-color: var(--leaf); }
 .todo-check svg { width: 13px; height: 13px; }
 .todo-text { flex: 1; min-width: 0; margin: 0; overflow-wrap: anywhere; font-size: 15px; line-height: 1.45; }
+.todo-edit-input { flex: 1; min-width: 0; padding: 8px 10px; color: var(--ink); background: var(--paper); border: 1px solid var(--leaf); border-radius: 7px; outline: none; box-shadow: 0 0 0 3px rgba(62, 124, 104, 0.1); }
 .todo-item.is-complete .todo-text { color: #9aa9a2; text-decoration: line-through; }
+.edit-button, .cancel-button { flex: 0 0 auto; padding: 6px 7px; color: var(--muted); background: transparent; border: 0; border-radius: 7px; font-size: 12px; }
+.edit-button:hover, .cancel-button:hover { color: var(--leaf-dark); background: var(--mint); }
+.edit-button.save-button { color: var(--leaf-dark); font-weight: 700; }
 .delete-button { flex: 0 0 30px; width: 30px; height: 30px; padding: 0; color: #a5b1ab; background: transparent; border: 0; border-radius: 7px; font-size: 20px; line-height: 1; }
 .delete-button:hover { color: var(--coral); background: #fff1ed; }
 

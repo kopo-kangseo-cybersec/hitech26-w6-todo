@@ -97,6 +97,13 @@ function createTodoElement(todo) {
   text.className = "todo-text";
   text.textContent = todo.text;
 
+  const editButton = document.createElement("button");
+  editButton.className = "edit-button";
+  editButton.type = "button";
+  editButton.setAttribute("aria-label", "할 일 수정");
+  editButton.textContent = "수정";
+  editButton.onclick = () => beginEdit(todo, item, text, editButton);
+
   const deleteButton = document.createElement("button");
   deleteButton.className = "delete-button";
   deleteButton.type = "button";
@@ -104,8 +111,54 @@ function createTodoElement(todo) {
   deleteButton.textContent = "×";
   deleteButton.addEventListener("click", () => deleteTodo(todo.id));
 
-  item.append(checkButton, text, deleteButton);
+  item.append(checkButton, text, editButton, deleteButton);
   return item;
+}
+
+function beginEdit(todo, item, text, editButton) {
+  const editInput = document.createElement("input");
+  editInput.className = "todo-edit-input";
+  editInput.type = "text";
+  editInput.maxLength = 120;
+  editInput.value = todo.text;
+  editInput.setAttribute("aria-label", "할 일 수정");
+
+  const cancelButton = document.createElement("button");
+  cancelButton.className = "cancel-button";
+  cancelButton.type = "button";
+  cancelButton.setAttribute("aria-label", "수정 취소");
+  cancelButton.textContent = "취소";
+
+  const finishEdit = (save) => {
+    if (save) {
+      const updatedText = editInput.value.trim();
+      if (!updatedText) {
+        editInput.focus();
+        return;
+      }
+      updateTodo(todo.id, updatedText);
+      return;
+    }
+    editInput.replaceWith(text);
+    cancelButton.remove();
+    editButton.textContent = "수정";
+    editButton.setAttribute("aria-label", "할 일 수정");
+    editButton.classList.remove("save-button");
+  };
+
+  editButton.textContent = "저장";
+  editButton.setAttribute("aria-label", "수정 저장");
+  editButton.classList.add("save-button");
+  editButton.insertAdjacentElement("afterend", cancelButton);
+  text.replaceWith(editInput);
+  editButton.onclick = () => finishEdit(true);
+  cancelButton.addEventListener("click", () => finishEdit(false));
+  editInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") finishEdit(true);
+    if (event.key === "Escape") finishEdit(false);
+  });
+  editInput.focus();
+  editInput.select();
 }
 
 function addTodo(text) {
@@ -121,6 +174,12 @@ function addTodo(text) {
 
 function toggleTodo(id) {
   state.todos = state.todos.map((todo) => todo.id === id ? { ...todo, isComplete: !todo.isComplete } : todo);
+  saveTodos();
+  render();
+}
+
+function updateTodo(id, text) {
+  state.todos = state.todos.map((todo) => todo.id === id ? { ...todo, text } : todo);
   saveTodos();
   render();
 }
