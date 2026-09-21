@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4efe6">
+  <title>오늘의 할 일</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <div class="topline">
+      <strong>오늘의 할 일</strong>
+      <span id="today-label"></span>
+    </div>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <h1 id="page-title">작은 일도<br>기록해두기.</h1>
+        <p class="intro">오늘 해야 할 일을 하나씩 정리하고,<br>끝낸 일은 가볍게 체크해 보세요.</p>
+      </div>
+      <div class="progress-card" aria-label="진행률">
+        <div class="progress-heading">
+          <span>오늘의 진행률</span>
+          <strong id="progress-number">0%</strong>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="할 일 완료 진행률">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="할 일 목록">
+      <form class="add-form" id="add-form">
+        <label for="task-input" class="visually-hidden">새 할 일</label>
+        <input id="task-input" type="text" maxlength="120" placeholder="새로운 할 일을 적어주세요" autocomplete="off">
+        <button type="submit">추가하기</button>
+      </form>
+
+      <div class="filters" role="tablist" aria-label="할 일 필터">
+        <button class="filter-tab" type="button" role="tab" data-filter="all" aria-selected="true">전체</button>
+        <button class="filter-tab" type="button" role="tab" data-filter="active" aria-selected="false">진행 중</button>
+        <button class="filter-tab" type="button" role="tab" data-filter="completed" aria-selected="false">완료됨</button>
+      </div>
+
+      <ul class="task-list" id="task-list"></ul>
+      <div class="empty-state" id="empty-state" hidden>
+        <strong id="empty-title">아직 할 일이 없어요.</strong>
+        <p id="empty-description">위 입력창에서 오늘의 첫 일을 추가해 보세요.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
