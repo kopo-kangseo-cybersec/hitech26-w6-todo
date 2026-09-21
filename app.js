@@ -66,6 +66,10 @@ function render() {
   elements.filters.forEach((filterButton) => {
     const isActive = filterButton.dataset.filter === state.filter;
     filterButton.classList.toggle('is-active', isActive);
+    filterButton.classList.toggle('text-ink', isActive);
+    filterButton.classList.toggle('text-muted', !isActive);
+    filterButton.classList.toggle('after:h-0.5', isActive);
+    filterButton.classList.toggle('after:h-0', !isActive);
     filterButton.setAttribute('aria-selected', isActive);
     filterButton.querySelector('span').textContent = counts[filterButton.dataset.filter];
   });
@@ -73,33 +77,33 @@ function render() {
 
 function createTodoElement(todo) {
   const item = document.createElement('article');
-  item.className = `todo-item${todo.isComplete ? ' is-complete' : ''}`;
+  item.className = `todo-item flex min-h-[66px] items-center gap-3.5 border border-line bg-white px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-card ${todo.isComplete ? 'is-complete' : ''}`;
   item.dataset.id = todo.id;
 
   const checkButton = document.createElement('button');
-  checkButton.className = 'todo-check';
+  checkButton.className = `todo-check grid h-[22px] w-[22px] shrink-0 place-items-center rounded-full border-[1.5px] border-[#a9b7b1] bg-white text-[13px] text-white transition hover:border-mint-deep ${todo.isComplete ? 'border-mint-deep bg-mint-deep after:content-[\'✓\']' : ''}`;
   checkButton.type = 'button';
   checkButton.setAttribute('aria-label', todo.isComplete ? '완료 취소' : '완료 처리');
   checkButton.addEventListener('click', () => toggleTodo(todo.id));
 
   const text = document.createElement('span');
-  text.className = 'todo-text';
+  text.className = `todo-text min-w-0 flex-1 break-words text-sm leading-[1.4] ${todo.isComplete ? 'text-[#9aa8a2] line-through decoration-coral' : ''}`;
   text.textContent = todo.text;
 
   const date = document.createElement('time');
-  date.className = 'todo-date';
+  date.className = 'todo-date whitespace-nowrap text-[11px] text-[#a5b0ab] max-[620px]:hidden';
   date.dateTime = new Date(todo.createdAt).toISOString();
   date.textContent = formatDate(todo.createdAt);
 
   const editButton = document.createElement('button');
-  editButton.className = 'edit-button';
+  editButton.className = 'edit-button border-0 bg-transparent px-[3px] py-[7px] text-[11px] font-bold text-muted transition hover:text-mint-deep';
   editButton.type = 'button';
   editButton.setAttribute('aria-label', `${todo.text} 수정`);
   editButton.textContent = '수정';
   editButton.addEventListener('click', () => startEditing(todo, item, text, editButton));
 
   const deleteButton = document.createElement('button');
-  deleteButton.className = 'delete-button';
+  deleteButton.className = 'delete-button h-7 w-7 border-0 bg-transparent text-[19px] leading-none text-[#a5b0ab] opacity-65 transition hover:text-coral hover:opacity-100';
   deleteButton.type = 'button';
   deleteButton.setAttribute('aria-label', `${todo.text} 삭제`);
   deleteButton.textContent = '×';
@@ -111,23 +115,23 @@ function createTodoElement(todo) {
 
 function startEditing(todo, item, textElement, editButton) {
   const input = document.createElement('input');
-  input.className = 'edit-input';
+  input.className = 'edit-input min-w-0 flex-1 border border-mint-deep px-2.5 py-2 text-sm text-ink outline-none';
   input.type = 'text';
   input.maxLength = 120;
   input.value = todo.text;
 
   const saveButton = document.createElement('button');
-  saveButton.className = 'edit-action save-edit';
+  saveButton.className = 'edit-action save-edit border-0 bg-transparent px-1.5 py-[7px] text-[11px] font-bold text-mint-deep';
   saveButton.type = 'button';
   saveButton.textContent = '저장';
 
   const cancelButton = document.createElement('button');
-  cancelButton.className = 'edit-action cancel-edit';
+  cancelButton.className = 'edit-action cancel-edit border-0 bg-transparent px-1.5 py-[7px] text-[11px] font-bold text-muted';
   cancelButton.type = 'button';
   cancelButton.textContent = '취소';
 
   const editActions = document.createElement('span');
-  editActions.className = 'edit-actions';
+  editActions.className = 'edit-actions flex shrink-0 gap-[5px]';
   editActions.append(saveButton, cancelButton);
 
   const saveEdit = () => {
