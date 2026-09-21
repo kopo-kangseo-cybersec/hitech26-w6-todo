@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오늘의 할 일</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <main class="shell mx-auto w-[calc(100%-2.5rem)] max-w-3xl px-0 py-8 sm:w-[calc(100%-4rem)] sm:py-14">
+    <p class="eyebrow mb-3 font-sans text-xs font-bold uppercase tracking-[0.16em] text-[#e85d3f]">Daily practice</p>
+    <h1 class="font-serif text-[clamp(2.6rem,7vw,5rem)] font-normal leading-[0.95] tracking-[-0.04em] text-[#18212b]">오늘의 할 일</h1>
+    <p class="intro mb-8 mt-5 max-w-lg font-serif text-base leading-relaxed text-[#68737d] sm:mt-6">작은 일들을 적어두고, 하나씩 가볍게 끝내보세요.</p>
+
+    <section class="app overflow-hidden rounded-2xl border border-white/80 bg-white/90 shadow-[0_18px_45px_rgba(24,33,43,0.09)] backdrop-blur-xl" aria-label="할 일 목록">
+      <form class="composer flex gap-2.5 bg-[#18212b] p-3 sm:p-[18px]" id="todo-form">
+        <input class="min-w-0 flex-1 border border-[#3c4852] bg-[#2a3540] px-4 py-3.5 text-white outline-none placeholder:text-[#acb7bd] focus:border-[#dcefe8] focus:ring-4 focus:ring-[#dcefe8]/20" id="todo-input" type="text" maxlength="120" placeholder="새로운 할 일을 적어보세요" autocomplete="off" aria-label="새로운 할 일">
+        <button class="add-button min-w-[84px] border-0 bg-[#e85d3f] px-2.5 font-sans text-xs font-bold text-white transition-colors hover:bg-[#c7442b] sm:min-w-[108px] sm:px-[18px]" type="submit">추가하기</button>
+      </form>
+
+      <section class="summary grid grid-cols-[1fr_auto] items-center gap-5 border-b border-[#dfe5e8] px-[18px] pb-5 pt-6 sm:px-[26px]" aria-live="polite">
+        <div>
+          <strong class="mb-1.5 block font-serif text-xl font-normal text-[#18212b]" id="progress-label">0개 중 0개 완료</strong>
+          <p class="font-sans text-xs text-[#68737d]">오늘의 진행률</p>
+          <div class="progress-track mt-3.5 h-2.5 w-full overflow-hidden rounded-full bg-[#edf0ed]" aria-hidden="true"><div class="progress-bar h-full w-0 rounded-full bg-[#e85d3f] transition-[width] duration-300" id="progress-bar"></div></div>
+        </div>
+        <div class="progress-value min-w-[55px] text-right font-sans text-2xl font-bold leading-none text-[#e85d3f] sm:min-w-[78px]" id="progress-value">0%</div>
+      </section>
+
+      <nav class="tabs flex gap-4 border-b border-[#dfe5e8] px-[18px] sm:gap-[22px] sm:px-[26px]" aria-label="할 일 필터">
+        <button class="tab relative border-0 border-b-[3px] border-transparent bg-transparent py-4 font-sans text-xs font-bold text-[#68737d] transition-colors hover:text-[#18212b] aria-selected:border-[#e85d3f] aria-selected:text-[#18212b]" type="button" data-filter="all" aria-selected="true">전체</button>
+        <button class="tab relative border-0 border-b-[3px] border-transparent bg-transparent py-4 font-sans text-xs font-bold text-[#68737d] transition-colors hover:text-[#18212b] aria-selected:border-[#e85d3f] aria-selected:text-[#18212b]" type="button" data-filter="active" aria-selected="false">진행 중</button>
+        <button class="tab relative border-0 border-b-[3px] border-transparent bg-transparent py-4 font-sans text-xs font-bold text-[#68737d] transition-colors hover:text-[#18212b] aria-selected:border-[#e85d3f] aria-selected:text-[#18212b]" type="button" data-filter="completed" aria-selected="false">완료됨</button>
+      </nav>
+
+      <div class="list px-[18px] pb-[18px] pt-2 sm:px-[26px]" id="todo-list"></div>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "today-todos";
+    let todos = loadTodos();
+    let currentFilter = "all";
+    let editingId = null;
+
+    const form = document.querySelector("#todo-form");
+    const input = document.querySelector("#todo-input");
+    const list = document.querySelector("#todo-list");
+    const progressLabel = document.querySelector("#progress-label");
+    const progressBar = document.querySelector("#progress-bar");
+    const progressValue = document.querySelector("#progress-value");
+
+    function loadTodos() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return Array.isArray(saved) ? saved : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveTodos() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    }
+
+    function getVisibleTodos() {
+      if (currentFilter === "active") return todos.filter((todo) => !todo.isComplete);
+      if (currentFilter === "completed") return todos.filter((todo) => todo.isComplete);
+      return todos;
+    }
+
+    function render() {
+      const completedCount = todos.filter((todo) => todo.isComplete).length;
+      const percentage = todos.length ? Math.round((completedCount / todos.length) * 100) : 0;
+      progressLabel.textContent = `${todos.length}개 중 ${completedCount}개 완료`;
+      progressValue.textContent = `${percentage}%`;
+      progressBar.style.width = `${percentage}%`;
+      progressBar.setAttribute("aria-valuenow", percentage);
+
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.setAttribute("aria-selected", String(tab.dataset.filter === currentFilter));
+      });
+
+      const visibleTodos = getVisibleTodos();
+      if (!visibleTodos.length) {
+        const message = todos.length ? "이 필터에 해당하는 할 일이 없어요." : "아직 등록된 할 일이 없어요.";
+        list.innerHTML = `<div class="empty px-5 py-14 text-center text-[#68737d]"><div class="empty-mark mb-3 text-3xl text-[#e85d3f]" aria-hidden="true">○</div><p class="font-serif text-base">${message}</p></div>`;
+        return;
+      }
+
+      list.innerHTML = visibleTodos.map((todo) => `
+        <article class="todo-item${todo.isComplete ? " completed" : ""} flex min-h-[70px] items-center gap-3.5 border-b border-[#dfe5e8] transition-colors hover:bg-[#f8faf7]" data-id="${todo.id}">
+          <button class="check grid h-[22px] w-[22px] shrink-0 place-items-center rounded-full border-2 ${todo.isComplete ? "border-[#e85d3f] bg-[#e85d3f]" : "border-[#aab5b8] bg-transparent hover:border-[#e85d3f]"} font-sans text-xs font-bold text-white transition-colors" type="button" data-action="toggle" aria-label="${todo.isComplete ? "완료 취소" : "완료 처리"}" aria-pressed="${todo.isComplete}">${todo.isComplete ? "✓" : ""}</button>
+          <div class="todo-copy min-w-0 flex-1">
+            ${todo.id === editingId ? `
+              <form class="edit-form flex items-center gap-2" data-action="save-edit">
+                <input class="edit-input w-full min-w-0 border border-[#e85d3f] px-2.5 py-2 font-serif text-base text-[#18212b] outline-none focus:ring-2 focus:ring-[#e85d3f]/20" type="text" maxlength="120" value="${escapeHtml(todo.text)}" aria-label="할 일 수정">
+                <button class="edit-action whitespace-nowrap border-0 bg-transparent p-2 font-sans text-xs font-bold text-[#c7442b] hover:text-[#e85d3f]" type="submit">저장</button>
+                <button class="edit-action whitespace-nowrap border-0 bg-transparent p-2 font-sans text-xs font-bold text-[#c7442b] hover:text-[#e85d3f]" type="button" data-action="cancel-edit">취소</button>
+              </form>
+            ` : `
+              <div class="todo-text break-words font-serif text-base leading-snug ${todo.isComplete ? "text-[#94a0a3] line-through" : "text-[#18212b]"}">${escapeHtml(todo.text)}</div>
+              <div class="todo-meta mt-1 font-sans text-[0.68rem] text-[#68737d]">${formatDate(todo.createdAt)}</div>
+            `}
+          </div>
+          ${todo.id === editingId ? "" : `<button class="delete-button edit-button border-0 bg-transparent p-2 font-sans text-xs text-[#18212b] transition-colors hover:text-[#e85d3f]" type="button" data-action="edit">수정</button>`}
+          <button class="delete-button border-0 bg-transparent p-2 font-sans text-xs text-[#a0aaad] transition-colors hover:text-[#e85d3f]" type="button" data-action="delete" aria-label="${escapeHtml(todo.text)} 삭제">삭제</button>
+        </article>
+      `).join("");
+
+      if (editingId) list.querySelector(".edit-input")?.focus();
+    }
+
+    function escapeHtml(text) {
+      const element = document.createElement("div");
+      element.textContent = text;
+      return element.innerHTML;
+    }
+
+    function formatDate(timestamp) {
+      return new Intl.DateTimeFormat("ko-KR", { month: "short", day: "numeric" }).format(new Date(timestamp));
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = input.value.trim();
+      if (!text) {
+        input.focus();
+        return;
+      }
+      todos.unshift({ id: crypto.randomUUID(), text, isComplete: false, createdAt: new Date().toISOString() });
+      saveTodos();
+      input.value = "";
+      render();
+      input.focus();
+    });
+
+    document.querySelector(".tabs").addEventListener("click", (event) => {
+      const tab = event.target.closest(".tab");
+      if (!tab) return;
+      currentFilter = tab.dataset.filter;
+      render();
+    });
+
+    list.addEventListener("submit", (event) => {
+      const editForm = event.target.closest("form[data-action='save-edit']");
+      if (!editForm) return;
+      event.preventDefault();
+      const item = editForm.closest("[data-id]");
+      const text = editForm.querySelector(".edit-input").value.trim();
+      if (!text) return;
+      todos = todos.map((todo) => todo.id === item.dataset.id ? { ...todo, text } : todo);
+      editingId = null;
+      saveTodos();
+      render();
+    });
+
+    list.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-action]");
+      if (!button) return;
+      const item = button.closest("[data-id]");
+      const id = item.dataset.id;
+      if (button.dataset.action === "edit") {
+        editingId = id;
+        render();
+        return;
+      }
+      if (button.dataset.action === "cancel-edit") {
+        editingId = null;
+        render();
+        return;
+      }
+      if (button.dataset.action === "toggle") {
+        todos = todos.map((todo) => todo.id === id ? { ...todo, isComplete: !todo.isComplete } : todo);
+      } else {
+        todos = todos.filter((todo) => todo.id !== id);
+      }
+      saveTodos();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
