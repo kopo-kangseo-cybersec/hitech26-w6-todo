@@ -74,8 +74,18 @@ function createTodoMarkup(todo) {
   return `<article class="todo-item${completeClass}" data-id="${todo.id}">
     <button class="todo-check" type="button" aria-label="${todo.isComplete ? "완료 취소" : "완료 처리"}" data-action="toggle"></button>
     <p class="todo-text">${safeText}</p>
+    <button class="edit-button" type="button" aria-label="할 일 수정" data-action="edit">편집</button>
     <button class="delete-button" type="button" aria-label="할 일 삭제" data-action="delete">×</button>
   </article>`;
+}
+
+function createEditMarkup(todo) {
+  return `<form class="edit-form" data-action="save-edit">
+    <label class="sr-only" for="edit-${todo.id}">할 일 수정</label>
+    <input id="edit-${todo.id}" class="edit-input" name="text" type="text" maxlength="120" value="${escapeHtml(todo.text)}" required />
+    <button class="save-edit-button" type="submit">저장</button>
+    <button class="cancel-edit-button" type="button" data-action="cancel-edit">취소</button>
+  </form>`;
 }
 
 function escapeHtml(value) {
@@ -105,8 +115,31 @@ elements.list.addEventListener("click", (event) => {
   const todoItem = actionButton.closest("[data-id]");
   const todo = state.todos.find((item) => item.id === todoItem.dataset.id);
   if (!todo) return;
+  if (actionButton.dataset.action === "save-edit") return;
+  if (actionButton.dataset.action === "edit") {
+    todoItem.innerHTML = createEditMarkup(todo);
+    todoItem.querySelector(".edit-input").focus();
+    todoItem.querySelector(".edit-input").select();
+    return;
+  }
+  if (actionButton.dataset.action === "cancel-edit") {
+    render();
+    return;
+  }
   if (actionButton.dataset.action === "toggle") todo.isComplete = !todo.isComplete;
   if (actionButton.dataset.action === "delete") state.todos = state.todos.filter((item) => item.id !== todo.id);
+  saveTodos();
+  render();
+});
+
+elements.list.addEventListener("submit", (event) => {
+  if (event.target.dataset.action !== "save-edit") return;
+  event.preventDefault();
+  const todoItem = event.target.closest("[data-id]");
+  const todo = state.todos.find((item) => item.id === todoItem.dataset.id);
+  const nextText = new FormData(event.target).get("text").trim();
+  if (!todo || !nextText) return;
+  todo.text = nextText;
   saveTodos();
   render();
 });
