@@ -200,15 +200,41 @@ h1 {
 .task-text { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: .98rem; line-height: 1.45; }
 .task-item.completed .task-text { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
 
+.edit-button,
 .delete-button {
   padding: 8px;
   border: 0;
-  color: #aaa39a;
   background: transparent;
   font-size: .78rem;
 }
 
+.edit-button { color: var(--muted); }
+.edit-button:hover { color: var(--ink); }
+
+.delete-button { color: #aaa39a; }
+
 .delete-button:hover { color: var(--coral-dark); }
+
+.edit-form { display: flex; align-items: center; gap: 10px; width: 100%; }
+
+.edit-input {
+  min-width: 0;
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--coral);
+  border-radius: 4px;
+  outline: none;
+  color: var(--ink);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(220, 103, 79, .12);
+}
+
+.edit-actions { display: flex; flex: 0 0 auto; gap: 4px; }
+.edit-save-button, .edit-cancel-button { padding: 8px 10px; border: 0; border-radius: 3px; font-size: .78rem; font-weight: 700; }
+.edit-save-button { color: white; background: var(--ink); }
+.edit-cancel-button { color: var(--muted); background: #f0ece4; }
+.edit-save-button:hover { background: var(--coral-dark); }
+.edit-cancel-button:hover { color: var(--ink); }
 
 .empty-state { padding: 65px 20px 70px; color: var(--muted); text-align: center; }
 .empty-state strong { display: block; margin-bottom: 8px; color: var(--ink); font-family: var(--font-sans); font-size: 1.5rem; font-weight: 700; }
@@ -223,4 +249,6 @@ h1 {
   h1 { font-size: clamp(2.7rem, 15vw, 4.5rem); line-height: 1.05; }
   .workspace { padding: 17px 13px; }
   .add-form button { padding: 0 16px; }
+  .edit-form { align-items: stretch; flex-direction: column; }
+  .edit-actions { justify-content: flex-end; }
 }
